@@ -1,0 +1,27 @@
+Introduction
+============
+
+BFilt uses cmake to build all its components.
+
+DEPENDANCES
+===========
+
+You must install first :
+
+Lapack : It's strongly recomended to compile it with ATLAS.
+cpplapack
+GSL
+
+INSTALLATION
+============
+
+Configure properly the path of differents sources in src/CMakelists.txt
+Then type :
+cd bin
+cmake ../src
+make
+make install
+
+If doxygene is installed an html documentation is built in doc/.
+ 
+Good luck !

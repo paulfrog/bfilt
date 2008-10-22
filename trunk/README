@@ -1,0 +1,48 @@
+
+The BFilt Library
+----------------------
+
+BFilt  is  a multi-platform  and  open-source  C++ bayesian  filtering
+library.  It  contains  useful   and  classical  algorithms  in  state
+estimation  of  hidden markov  models.  So  you  can easily  construct
+discrete-disrete (DD)  and continuous-discrete (CD)  models (linear or
+nonlinear) for filtering (Kalman, EKF, UKF, particle filters, ...) and
+simulation methods. Indeed, markovian model simulators can be used for
+particle  filters. Libraries  such as  BFL and  Bayes++  consider only
+discrete-discrete filtering. With BFilt, you can easily construct your
+own  CD  or  DD  models   for  filtering.  For  CD  models  stochastic
+discretization methods (Euler, Runge Kutta, Local linearization, Heun)
+are implemented in simulation and filtering.
+
+
+ 
+LAPACK   and  CPPLAPACK   libraries  are   used  for   linear  algebra
+operations.  For  best  performances  it  is  recommended  to  compile
+yourself the LAPPACK libraries  with ATLAS. The Gnu Scientific Library
+(GSL)  achieves random  drawing in  simulators. These  open-source and
+multi-platform libraries must be installed before install BFilt.
+
+
+Installation
+------------
+      This Library can be installed on Linux, Os X (>10.4) and Windows
+      (via Cygwin). Read INSTALL file how to build and install BFilt.
+
+Copyright
+---------
+
+                    Copyright (C) 2008  Paul Frogerais
+
+The BFilt  Library is  free software: you  can redistribute  it and/or
+modify  it  under the  terms  of the  GNU  General  Public License  as
+published by  the Free  Software Foundation, either  version 3  of the
+License, or (at your option) any later version.
+
+This program  is distributed in the  hope that it will  be useful, but
+WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
+MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
+General Public License for more details.
+
+You  should have received  a copy  of the  GNU General  Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
