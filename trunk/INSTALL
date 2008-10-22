@@ -1,7 +1,7 @@
 Introduction
 ============
 
-BFilt uses cmake to build all its components.
+BFilt uses cmake and make to build all its components.
 
 DEPENDANCES
 ===========
