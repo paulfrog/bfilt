@@ -1,20 +1,3 @@
-// BFilt : A bayesian Filtering Library
-
-//                     Copyright (C) 2008  Paul Frogerais
-
-// The BFilt  Library is  free software: you  can redistribute  it and/or
-// modify  it  under the  terms  of the  GNU  General  Public License  as
-// published by  the Free  Software Foundation, either  version 3  of the
-// License, or (at your option) any later version.
-
-// This program  is distributed in the  hope that it will  be useful, but
-// WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
-// MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
-// General Public License for more details.
-
-// You  should have received  a copy  of the  GNU General  Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 /// @mainpage
 ///
 /// @section description Description 
@@ -41,6 +24,28 @@
 /// open-source and multi-platform  libraries must be installed before
 /// install BFilt.
 ///
+/// @section Installation
+/// Go to the bin directory
+/// @code
+/// cd BFilt/bin
+/// @endcode 
+/// Run Cmake (>2.6)
+/// @code
+/// cmake ../src
+/// @endcode
+/// Compile Bfilt
+/// @code 
+/// make
+/// @endcode 
+/// Install BFilt in /usr/local/lib or /usr/local/inlcude 
+/// @code 
+/// make install
+/// @endcode
+/// If you want to change the default install directory you can type
+/// @code 
+/// ccmake 
+/// @endcode 
+/// and change CMAKE_INSTALL_PREFIX 
 /// @section auteur Auteur
 ///
 /// @author paul <paul.frogerais@univ-rennes1.fr>
@@ -67,8 +72,8 @@
 ///  of the STATE \f$ X_{k} \f$ of a hidden markov model (Model) given
 ///  observations \f$ Y_{0:k} \f$. \par
 ///
-///  They    compute    also    recursively   the    likelihood    \f$
-///  p_{Y_{0:N}}(y_{0:N}) \f$.
+///  They    compute    also    recursively   the    likelihood    
+///  \f$ p_{Y_{0:N}}(y_{0:N}) \f$.
 
 class Filter
 {
