@@ -1,19 +1,19 @@
 #include <bfilt/simulator.h>
-#include <bfilt/filter.h>
-#include "ar_process.h"
+#include <bfilt/extended_kalman_filter.h>
+#include "van_der_pol.h"
 
 
 
 int main(int argc, char **argv)
 {
-      AR_Process model;            // The AR model
+      Van_Der_Pol model;              // The model
 
-      G_Simulator sim(&model);      // The simulator
+      CD_Simulator sim(&model);   // The simulator
       
-      DD_Kalman  filter(&model);   // The Kalman filter	
+      CD_Extended_Kalman_Filter  filter(&model,THGL);      // The filter
       
-      // Simulation 100 samples
-      sim.Simulate(100);
+      // Simulation 40 seconds
+      sim.Simulate(40.);
         
 
       // Filtering from the simulated output sim.Y
