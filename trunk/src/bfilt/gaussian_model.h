@@ -71,6 +71,13 @@ public :
       int Get_Time(void);
 };
 
+/// @brief Class of discretely observed model
+/// 
+/// The output \f$Y_k\f$ is a discrete form of the hidden state.
+/// The init state is gaussian \f$ \sim \mathcal{N}(X0,R0)\f$.
+/// The state  and observation noises \f$ Wk, V_k \f$ are zero-mean gaussians processes.
+/// Their respective covariances are  \f$ Q_w \f$ and \f$ Q_v\f$  .
+
 class Discrete_Observed_Model : public Model
 {
 protected :
