@@ -1,20 +1,3 @@
-// BFilt : A bayesian Filtering Library
-
-//                     Copyright (C) 2008  Paul Frogerais
-
-// The BFilt  Library is  free software: you  can redistribute  it and/or
-// modify  it  under the  terms  of the  GNU  General  Public License  as
-// published by  the Free  Software Foundation, either  version 3  of the
-// License, or (at your option) any later version.
-
-// This program  is distributed in the  hope that it will  be useful, but
-// WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
-// MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
-// General Public License for more details.
-
-// You  should have received  a copy  of the  GNU General  Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 ///
 /// @file   unscented_kalman_filter.h
 /// @author paul <paul.frogerais@univ-rennes1.fr>
@@ -64,23 +47,17 @@ class Unscented_Kalman_Filter : public GA_Filter
 public :
 
       /// @brief A scaled parameter
-      float alpha ;
+      float lambda ;
 
-
+      /// @brief A constructor
+      ///
+      Unscented_Kalman_Filter(void);
       /// @brief  The constructor
       ///
       /// @param model A gaussian non linear model
       ///
       ///      
       Unscented_Kalman_Filter(Gaussian_Nonlinear_Model * model);
-
-      ///  @brief  The constructor
-      ///
-      /// @param model A gaussian non linear model
-      /// @param a Dispesrion of sigma point
-      ///
-      ///
-      Unscented_Kalman_Filter(Gaussian_Nonlinear_Model * model, const double & a);
 
 
 protected :

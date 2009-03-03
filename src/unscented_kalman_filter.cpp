@@ -1,62 +1,40 @@
-// BFilt : A bayesian Filtering Library
-
-//                     Copyright (C) 2008  Paul Frogerais
-
-// The BFilt  Library is  free software: you  can redistribute  it and/or
-// modify  it  under the  terms  of the  GNU  General  Public License  as
-// published by  the Free  Software Foundation, either  version 3  of the
-// License, or (at your option) any later version.
-
-// This program  is distributed in the  hope that it will  be useful, but
-// WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
-// MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
-// General Public License for more details.
-
-// You  should have received  a copy  of the  GNU General  Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 #include <bfilt/unscented_kalman_filter.h>
 
+Unscented_Kalman_Filter::Unscented_Kalman_Filter(void)
+{
+}
 Unscented_Kalman_Filter::Unscented_Kalman_Filter(Gaussian_Nonlinear_Model *m):GA_Filter::GA_Filter(m)
 {
-
-      model=m;
-      alpha = 0.5;
 }
 
-Unscented_Kalman_Filter::Unscented_Kalman_Filter(Gaussian_Nonlinear_Model *m, const double & a):GA_Filter::GA_Filter(m)
-{
-
-      model=m;
-      alpha = a;
-}
 
 int Unscented_Kalman_Filter::_init(void)
 {
       Gaussian_Nonlinear_Model *m=dynamic_cast<Gaussian_Nonlinear_Model *>(model);
       dcovector x0;
       dsymatrix r0;
+
       m->Get_Init_Parameters(x0,r0);
       M=x0;
       R=r0;
-      if(cholesky(m->Qw,sqrt_Qw))
+
+      if(sqrtm(m->Qw,sqrt_Qw))
             return 1;
-      if(cholesky(m->Qv,sqrt_Qv))
+      if(sqrtm(m->Qv,sqrt_Qv))
             return 1;
       int Nx=  M.l;
       int Nw= sqrt_Qw.n;
       int N= Nx+Nw;
       int i;
-      double lambda = alpha * alpha * N - N;
+      lambda = 3. - N;
 
       w_0  = lambda / (N + lambda);
-      w_0c = lambda / (N + lambda) + (3. - alpha * alpha );
+      w_0c = lambda / (N + lambda);// + (3. - alpha * alpha )
       w    = 1. /(2.*(N+ lambda));
 
       sX.resize(2*N+1);
       sW.resize(2*N+1);
       sY.resize(2*N+1);
-
       Likelihood = 0.;
       return 0;
 }
@@ -72,6 +50,8 @@ int Unscented_Kalman_Filter::_update(const dcovector &Y)
       dgematrix cyy,cxy,k;
       dcovector my,mx;
       dcovector I;
+
+      
       if(SP_Init())
             return 1;
 
@@ -83,9 +63,11 @@ int Unscented_Kalman_Filter::_update(const dcovector &Y)
 	    }
 
       U_Mean(sX,mx);
-      Xp=mx;
+
 
       U_Cov(sX,mx,sX,mx,Rp);
+      Xp=mx;
+
 
       for(i=0;i<N;i++)
 	    {
@@ -119,11 +101,12 @@ int Unscented_Kalman_Filter::SP_Init(void)
       int N= Nx+Nw;
       int i;
       dgematrix  sqrt_R;
-      double phi = alpha*sqrt(N);
+      double phi = sqrt(N+lambda);
 
-      if(cholesky(R,sqrt_R))
-            return 1;
-
+      if(sqrtm(R,sqrt_R))
+            {
+                  return 1;
+            }
       sX[0]=M;
       sW[0].zero();
 

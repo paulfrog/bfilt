@@ -1,25 +1,7 @@
-// BFilt : A bayesian Filtering Library
-
-//                     Copyright (C) 2008  Paul Frogerais
-
-// The BFilt  Library is  free software: you  can redistribute  it and/or
-// modify  it  under the  terms  of the  GNU  General  Public License  as
-// published by  the Free  Software Foundation, either  version 3  of the
-// License, or (at your option) any later version.
-
-// This program  is distributed in the  hope that it will  be useful, but
-// WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
-// MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
-// General Public License for more details.
-
-// You  should have received  a copy  of the  GNU General  Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 #include <bfilt/extended_kalman_filter.h>
 
 Extended_Kalman_Filter::Extended_Kalman_Filter(void)
 {
-      Likelihood=0.;
 }
 
 
@@ -71,9 +53,9 @@ CD_Extended_Kalman_Filter::CD_Extended_Kalman_Filter(void)
 {
 }
 
-CD_Extended_Kalman_Filter::CD_Extended_Kalman_Filter(Continuous_Discrete_Model *m, const int & sh)
+CD_Extended_Kalman_Filter::CD_Extended_Kalman_Filter(Continuous_Discrete_Model *m, const int & sh):
+      CD_Filter::CD_Filter(m)
 {
-      model=m;
       Scheme=sh;
 }
 int  CD_Extended_Kalman_Filter::_update(const dcovector &Y)
@@ -102,6 +84,10 @@ int  CD_Extended_Kalman_Filter::_update(const dcovector &Y)
                   break;
             case HEUN :
                   _heun__prediction(Xp,Rp);
+            case RK4_FM :
+                  _rk4___prediction_FM(Xp,Rp);
+                  break;
+
             default :
                   break;
             }
@@ -235,4 +221,45 @@ void CD_Extended_Kalman_Filter::_heun__prediction(dcovector &Xp, dgematrix &p)
       K2 = J2 * (R + delta * K1) + (R + delta * K1) * t(J2) + Q;
 
       p = R + delta * (K1 + K2) /2.;
+}
+
+
+void CD_Extended_Kalman_Filter::_rk4___prediction_FM(dcovector &Xp, dgematrix &p)
+{
+      Continuous_Discrete_Model *m=dynamic_cast<Continuous_Discrete_Model *>(model);
+      dgematrix G = m->Diffusion_Function();
+      dgematrix Q=G*(m->Qw*t(G));
+      double delta = m->Ts;
+      dgematrix phi(p.m,p.n);
+      dcovector  dx1, dx2, dx3, dx4;
+
+      dgematrix K1, K2, K3, K4;
+
+      dgematrix J1,J2,J3,J4;
+
+      dx1 =  m->Drift_Function(M);
+
+      dx2 =  m->Drift_Function(M + 0.5*delta *dx1);
+
+      dx3 =  m->Drift_Function(M + 0.5*delta *dx2);
+
+      dx4 =  m->Drift_Function(M + delta *dx3); 
+
+      Xp= M + delta * (dx1+2.*dx2+2.*dx3+dx4)/6.;
+
+
+      J1 = m->J_Drift_Function(M);
+      J2 = m->J_Drift_Function(M + 0.5 * delta * dx1);
+      J3 = m->J_Drift_Function(M + 0.5 * delta * dx2);
+      J4 = m->J_Drift_Function(M + delta * dx3);
+
+      phi.identity();
+      K1 = J1  ;
+      K2 = J2 * (phi + 0.5*delta * K1);
+      K3 = J3 * (phi + 0.5*delta * K2);
+      K4 = J4 * (phi + delta * K3);
+
+      phi = phi + delta *(K1 + 2.*K2 + 2.*K3 + K4) / 6.;
+
+      p = phi *(R * t(phi)) +  Q  * delta;
 }
