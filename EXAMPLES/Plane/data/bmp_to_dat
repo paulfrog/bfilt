@@ -1,0 +1,4 @@
+INTPUT=$1
+OUTPUT=$2
+convert  map_2.bmp -resize 180x80\! -depth 8 -colorspace RGB +matte txt:- |tail -n +2 | tr -cs '0-9\n'  ' ' | while read x y r g b junk; do    echo "$x $y $r "  
+done >map_2.dat
