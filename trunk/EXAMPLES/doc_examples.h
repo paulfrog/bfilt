@@ -171,7 +171,7 @@
 */
 
 
-/*!  \example example_3.cpp
+/*!  \page page_3 Van Der Pol oscillator
 
   This example  on the Van der Pol  oscillator shows how to  use BFilt for
   non-linear  continuous-discrete  model. Here the van_der_pol class : \par
@@ -179,9 +179,28 @@
   \include van_der_pol.h
   van_der_pol.cpp
   \include van_der_pol.cpp
-
+  The main program :
+  \include example_3.cpp
   Results can be plotted (here with gnuplot):
   \image html  "van_der_pol.jpg"
   \image latex van_der_pol.eps
+  
+*/
+
+
+/*!  \page page_4 Terrain navigation
+This example illustrate performances of particle filter to highly non-linear 
+filter. The promblem here involves a plane whose the trajectory is a brownian
+motion. This aircraft measure the elevation. The measure of this elevation and 
+an elevation map are then used to estimate the position of the plane.
+\image html  "plane.gif"
+\image latex plane.pdf
+
+  plane.h
+  \include plane.h
+  plane.cpp
+  \include plane.cpp
+  The main program :
+  \include example_4.cpp
   
 */

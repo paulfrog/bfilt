@@ -1,21 +1,5 @@
-// BFilt : A bayesian Filtering Library
-
-//                     Copyright (C) 2008  Paul Frogerais
-
-// The BFilt  Library is  free software: you  can redistribute  it and/or
-// modify  it  under the  terms  of the  GNU  General  Public License  as
-// published by  the Free  Software Foundation, either  version 3  of the
-// License, or (at your option) any later version.
-
-// This program  is distributed in the  hope that it will  be useful, but
-// WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
-// MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
-// General Public License for more details.
-
-// You  should have received  a copy  of the  GNU General  Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 #include <bfilt/filter_tools.h>
+
 double norm_1(const dgematrix &A)
 {
       int i,j;
@@ -187,7 +171,8 @@ dgematrix expm(const dgematrix &A)
  }
 
 
-double det(const dsymatrix & A){
+double det(const dsymatrix & A)
+{
       dgematrix L;
       cholesky(A,L);
       double d=1.;
@@ -198,27 +183,104 @@ double det(const dsymatrix & A){
 }
 
 double det(const dgematrix & A){
+      int N=A.m;
       dgematrix L;
-      cholesky(A,L);
+      dsymatrix S(N);
+      
       double d=1.;
-      int i,N=A.n;
+      int i;
+      int j;
+      for (j=0;j<N;j++)
+	    for(i=j;i<N;i++)
+		  S(i,j)=A(i,j);
+      
+      cholesky(S,L);
       for(i=0;i<N;i++)
 	    d*=L(i,i)*L(i,i);
       return d;
 }
 
-
-int cholesky(const dgematrix & A, dgematrix &L){
-      int n,N=A.m;
-      int i,j;
-      if (A.n != N) {cout << "matrix not square !"<<endl; return 1;}
-      dsymatrix S;
-      S.resize(N);
-      for (j=0;j<N;j++)
-	    for(i=j;i<N;i++)
-		  S(i,j)=A(i,j);
-      return  cholesky(S,L);
+int sqrtm(const dgematrix &A, dgematrix & sqrtA)
+{
+      dgematrix P,D;
+      int i;
+      
+      if (!eigen_decomposition(A,P,D))
+            {
+                  for (i=0;i<D.m; i++)
+                        D(i,i)=sqrt(fabs(D(i,i)));
+                  sqrtA = P * D * t(P);
+                  return 0;
+            }
+      else
+            {
+                  cerr<<"BFilt :: SQRTM Problem."<<endl;
+                  return 1;
+            }
 }
+
+int sqrtm(const dsymatrix &A, dgematrix & sqrtA)
+{
+      dgematrix P,D;
+      int i;
+      
+      if (!cholesky(A,sqrtA))
+            {
+                  return 0;
+            }
+      if (!eigen_decomposition(A,P,D))
+            {
+                  for (i=0;i<D.m; i++)
+                        {
+                              D(i,i)=sqrt(fabs(D(i,i)));
+                        }
+                  sqrtA = P * D * t(P);
+                  return 0;
+            }
+      
+      cerr<<"BFilt :: SQRTM Problem."<<endl;
+      return 1;
+}
+
+int eigen_decomposition(const dgematrix &A, dgematrix & P, dgematrix &D)
+{
+      int N= A.n;
+      vector<double> wr, wi;
+      vector<dcovector > vr, vi;
+      dgematrix _A(A);
+      int i,j;
+      if(A.n != A.m)
+            {
+                  cerr<<"BFilt :: Matrix must be square"<<endl;
+                  return 1;
+            }
+      D.resize(N,N);
+      P.resize(N,N);
+
+      if(_A.dgeev(wr,wi,vr,vi))
+            return 1;
+      P.zero();
+      for(j=0; j<P.m; j++)
+            { 
+                  for(i=0; i<P.n; i++)
+                        {
+                              P(i,j) = vr[j](i);
+                        }
+            }
+      D.zero();
+      for(i=0;i<N;i++)
+            {
+                  if(wi[i] != 0)
+                        {
+                              cerr<<"BFilt :: Matrix must be real"<<endl;
+                              return 1;
+                        }
+
+                  D(i,i) = wr[i];
+            }
+      return 0;
+}
+
 int cholesky(const dsymatrix & A, dgematrix &L){
 
       const int N=A.n;
@@ -229,7 +291,10 @@ int cholesky(const dsymatrix & A, dgematrix &L){
       double sum,x;
 
       x=(A(0,0));
-      if(x<=0.){return 1;}
+      if(x<=0.)
+            {
+                  return 1;
+            }
       L(0,0)=sqrt(x);
       for (i=1;i<N;i++)
 	    L(i,0)=A(0,i)/L(0,0);
@@ -239,7 +304,10 @@ int cholesky(const dsymatrix & A, dgematrix &L){
 	    for (k=0;k<i;k++)
 		  sum+=L(i,k)*L(i,k);
 	    x=(A(i,i)-sum);
-	    if(x<=0.){ return 1;}
+	    if(x<=0.)
+                  { 
+                        return 1;
+                  }
 	    L(i,i)=sqrt(x);
 	    for (j=i+1;j<N;j++){
 		  sum=0.;
@@ -270,9 +338,17 @@ int multivariate_normal_draw(dcovector & X, gsl_rng * r, const dgematrix & Q){
       X.resize(Q.n);
       dgematrix L;
       int i;
+      int j;
+      int N=Q.m;
+      dsymatrix S(N);
       for (i=0;i<X.l;i++)
 	    X(i)=gsl_ran_gaussian(r,1.);
-      if(  cholesky(Q,L)){
+      
+      for (j=0;j<N;j++)
+	    for(i=j;i<N;i++)
+		  S(i,j)=Q(i,j);
+
+      if(  cholesky(S,L)){
 	    X.zero();
 	    return 1;
       }

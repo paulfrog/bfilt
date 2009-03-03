@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 PROJECT(BFilt)
+
 ADD_DEFINITIONS(" -O3 ")
 
 # GSL
@@ -11,16 +12,19 @@ SET(LAPACK_LIBS lapack f77blas cblas atlas gfortran)
 
 # Include et Link Directories
 
-INCLUDE_DIRECTORIES(
-  /sw/include/
-  /usr/local/include
-  ../src
-  )
-LINK_DIRECTORIES(
-  /sw/lib/  
-  /usr/local/lib 
-  )
-
+IF(APPLE)
+  INCLUDE_DIRECTORIES(
+    /sw/include/
+    ../src
+    )
+  LINK_DIRECTORIES(
+    /sw/lib/  
+    )
+ELSE(APPLE)
+    INCLUDE_DIRECTORIES(
+    ../src
+    )
+ENDIF(APPLE)
 
 # Executables and "stand-alone " librairies
 ADD_LIBRARY (bfilt SHARED
@@ -46,20 +50,3 @@ TARGET_LINK_LIBRARIES(bfilt
 INSTALL(TARGETS bfilt DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 INSTALL(DIRECTORY ../src/bfilt DESTINATION ${CMAKE_INSTALL_PREFIX}/include/
   FILES_MATCHING PATTERN "*.h")
-
-#documentation
-
-##Generation of the documentation using doxygen
-FIND_PATH(DOXYGEN_DIR doxygen
-  /usr/local/bin
-  /usr/bin
-  )
-IF (DOXYGEN_DIR)
-  MESSAGE(STATUS "Doxygen generation of the documentation")
-  EXEC_PROGRAM(
-    "cd ../doc ; ${DOXYGEN_DIR}/doxygen Doxyfile"
-    OUTPUT_VARIABLE MY_OUTPUT
-    )
-ELSE (DOXYGEN_DIR)
-  MESSAGE(STATUS "Doxygen not found, I cannot generate the documentation")
-ENDIF (DOXYGEN_DIR)

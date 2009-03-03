@@ -1,20 +1,3 @@
-// BFilt : A bayesian Filtering Library
-
-//                     Copyright (C) 2008  Paul Frogerais
-
-// The BFilt  Library is  free software: you  can redistribute  it and/or
-// modify  it  under the  terms  of the  GNU  General  Public License  as
-// published by  the Free  Software Foundation, either  version 3  of the
-// License, or (at your option) any later version.
-
-// This program  is distributed in the  hope that it will  be useful, but
-// WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
-// MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
-// General Public License for more details.
-
-// You  should have received  a copy  of the  GNU General  Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 #include <bfilt/simulator.h>
 
 Simulator::Simulator(void)
@@ -39,11 +22,15 @@ void  Simulator::_update(void)
       int N=X.size();
       if (N ==0)
             {
+                  if(model)
+                        model->Clear();
                   X.push_back(Draw_Init());
                   Y.push_back(Draw_Observation(X[0]));
             }
       else
             {
+                  if(model)
+                        model->Update();
                   X.push_back(Draw_Transition(X[N-1]));
                   Y.push_back(Draw_Observation(X[N-1]));
             }
@@ -251,7 +238,7 @@ void  CD_Simulator::_update(void)
             }
       else
             {
-                  for (k=0; k<=_a; k++)
+                  for (k=0; k<_a; k++)
                         {
                               X.push_back(draw_state(X[X.size()-1]));
                         }

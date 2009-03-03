@@ -1,20 +1,3 @@
-// BFilt : A bayesian Filtering Library
-
-//                     Copyright (C) 2008  Paul Frogerais
-
-// The BFilt  Library is  free software: you  can redistribute  it and/or
-// modify  it  under the  terms  of the  GNU  General  Public License  as
-// published by  the Free  Software Foundation, either  version 3  of the
-// License, or (at your option) any later version.
-
-// This program  is distributed in the  hope that it will  be useful, but
-// WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
-// MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
-// General Public License for more details.
-
-// You  should have received  a copy  of the  GNU General  Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 ///
 /// @file   filter_tools.h
 /// @author paul <paul.frogerais@univ-rennes1.fr>
@@ -37,7 +20,35 @@
 using namespace std;
 using namespace CPPL;
 
-enum{EULER, HEUN, SRK4, OZAKI, RK4, THGL};
+enum{EULER, HEUN, SRK4, OZAKI, RK4, THGL,RK4_FM};
+
+/// Calculate a eingen decomposition A = P * D * P^-1
+///
+/// @param A 
+/// @param P The matrix of eigen vectors
+/// @param D The digonal matrix of eigen values
+///
+/// @return 0 if ok
+///
+int eigen_decomposition(const dgematrix &A, dgematrix & P, dgematrix &D); 
+
+/// calulate a square root matrix of A
+///
+/// @param A a matrix
+/// @param sqrtA the square root of A
+///
+/// @return 0 if ok
+///
+int sqrtm(const dsymatrix &A, dgematrix & sqrtA);
+
+/// calulate a square root matrix of A
+///
+/// @param A a matrix
+/// @param sqrtA the square root of A
+///
+/// @return 0 if ok
+///
+int sqrtm(const dgematrix &A, dgematrix & sqrtA);
 
 /// Compute the exponential of a matrix
 ///
@@ -56,13 +67,6 @@ dgematrix PadeApproximantOfDegree(const dgematrix A, const int &m);
  * \return 1 if A is not semi difinite positive.
  */
 int  cholesky(const dsymatrix & A, dgematrix & L);
-
-/** \brief compute the cholesky decompisition
- * \param A the symetric and semi difinite positive matrix
- * \param L the lower matrix
- * \return 1 if A is not semi difinite positive.
- */
-int  cholesky(const dgematrix & A, dgematrix & L);
 
 /** \brief draw from a multivariate gaussian distribution
  * \param X the random result 
